@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flor de Lis — Artículos religiosos</title>
+<meta name="description" content="Rosarios, joyería, bolsos y artículos religiosos artesanales para acompañar la fe de tu hogar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --vino:#6e1f2f; --vino-osc:#591824;
+    --oro:#b8863b; --crema:#f8f3ea; --crema-2:#efe6d8;
+    --tinta:#2b2420; --tinta-suave:#6b5f52;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--crema);color:var(--tinta);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased;}
+  a{color:var(--vino);}
+  .serif{font-family:'Cormorant Garamond',serif;}
+  .wrap{max-width:1280px;margin:0 auto;}
+  button{font-family:inherit;}
+  .eyebrow{display:inline-block;color:var(--oro);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+  /* Header */
+  header{position:sticky;top:0;z-index:40;background:rgba(248,243,234,0.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(184,134,59,0.35);}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,3vw,24px);flex-wrap:wrap;padding:14px clamp(16px,5vw,48px);}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand span{font-size:23px;font-weight:600;letter-spacing:0.3px;color:var(--tinta);}
+  nav{display:flex;gap:clamp(16px,4vw,36px);flex-wrap:wrap;}
+  nav a{text-decoration:none;color:var(--tinta);font-size:15px;font-weight:500;}
+  nav a:hover{color:var(--oro);}
+  .cart-btn{position:relative;display:flex;align-items:center;background:none;border:none;cursor:pointer;padding:4px;}
+  .cart-badge{position:absolute;top:-8px;right:-9px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--vino);color:var(--crema);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  /* Hero */
+  .hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(36px,6vw,64px);align-items:center;padding:clamp(48px,9vw,88px) clamp(20px,5vw,48px) clamp(56px,10vw,100px);}
+  .hero h1{font-size:clamp(34px,6.5vw,56px);line-height:1.06;font-weight:600;margin:18px 0 24px;}
+  .hero p{font-size:18px;line-height:1.65;color:var(--tinta-suave);max-width:460px;margin:0 0 36px;}
+  .cta{text-decoration:none;padding:16px 32px;border-radius:3px;font-size:15px;font-weight:600;letter-spacing:0.3px;display:inline-block;}
+  .cta-solid{background:var(--vino);color:var(--crema);}
+  .cta-solid:hover{background:var(--vino-osc);}
+  .cta-ghost{background:transparent;color:var(--vino);border:1.5px solid var(--vino);padding:14.5px 32px;}
+  .cta-ghost:hover{background:rgba(110,31,47,0.06);}
+  .hero-frame{border:1px solid rgba(184,134,59,0.4);padding:16px;background:#fff;position:relative;}
+  .hero-frame img{display:block;width:100%;height:clamp(320px,45vw,560px);object-fit:cover;}
+  .hero-media{position:relative;}
+  .hero-media .fdl{position:absolute;opacity:.9;}
+  /* Catalog */
+  #catalogo{background:var(--crema-2);padding:clamp(56px,10vw,96px) clamp(20px,5vw,48px);}
+  #catalogo h2{font-size:40px;font-weight:600;margin:14px 0 12px;}
+  .cat-intro{font-size:16px;line-height:1.6;color:var(--tinta-suave);max-width:560px;margin:0 0 40px;}
+  .pills{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:48px;}
+  .pill{padding:9px 18px;border-radius:40px;border:1.5px solid rgba(110,31,47,0.3);background:transparent;color:var(--vino);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .pill:hover{border-color:var(--vino);}
+  .pill.active{background:var(--vino);color:var(--crema);border-color:var(--vino);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:clamp(20px,3vw,28px);}
+  .card{background:#fff;border:1px solid rgba(184,134,59,0.25);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .2s;}
+  .card:hover{box-shadow:0 10px 28px rgba(43,36,32,0.12);}
+  .card-img{position:relative;width:100%;aspect-ratio:1/1;background:var(--crema-2);overflow:hidden;}
+  .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-img .noimg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--tinta-suave);}
+  .card-body{padding:20px;flex:1;display:flex;flex-direction:column;}
+  .card-cat{color:var(--oro);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+  .card-body h3{font-size:20px;font-weight:600;margin:8px 0 6px;}
+  .card-desc{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;line-height:1.5;color:var(--tinta-suave);margin:0 0 16px;flex:1;}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .price{font-size:18px;font-weight:700;color:var(--vino);}
+  .add-btn{background:var(--vino);color:var(--crema);border:none;padding:8px 16px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;}
+  .add-btn:hover{background:var(--vino-osc);}
+  .empty{grid-column:1/-1;text-align:center;color:var(--tinta-suave);padding:60px 20px;font-size:16px;}
+  /* Nosotros */
+  #nosotros{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(32px,6vw,64px);align-items:center;padding:clamp(56px,10vw,100px) clamp(20px,5vw,48px);}
+  #nosotros h2{font-size:36px;font-weight:600;margin:14px 0 22px;}
+  #nosotros p{font-size:17px;line-height:1.75;color:var(--tinta-suave);margin:0 0 20px;}
+  .about-art{width:100%;aspect-ratio:4/5;background:var(--crema-2);border:1px solid rgba(184,134,59,0.4);display:flex;align-items:center;justify-content:center;}
+  /* Footer */
+  footer{background:var(--tinta);color:var(--crema);padding:clamp(40px,8vw,64px) clamp(20px,5vw,48px) 28px;}
+  .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;padding-bottom:40px;border-bottom:1px solid rgba(248,243,234,0.15);}
+  footer .fcol span.h{font-size:13px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--oro);}
+  footer .fcol a{display:block;text-decoration:none;color:rgba(248,243,234,0.8);font-size:14px;margin-top:12px;}
+  footer .fcol a:hover{color:var(--crema);}
+  .fbot{display:flex;align-items:center;justify-content:space-between;padding-top:24px;flex-wrap:wrap;gap:12px;font-size:13px;color:rgba(248,243,234,0.55);}
+  /* Modales */
+  .overlay{position:fixed;inset:0;z-index:100;background:rgba(43,36,32,0.5);display:none;}
+  .overlay.open{display:block;}
+  .panel{position:fixed;inset:0;z-index:101;background:var(--crema);overflow-y:auto;display:none;}
+  .panel.open{display:block;}
+  .back-btn{background:none;border:none;color:var(--vino);font-size:14px;font-weight:600;cursor:pointer;padding:0;margin-bottom:32px;display:flex;align-items:center;gap:6px;}
+  .detail{max-width:1180px;margin:0 auto;padding:clamp(20px,5vw,32px) clamp(16px,5vw,48px) 100px;}
+  .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(32px,6vw,56px);}
+  .detail-img{width:100%;aspect-ratio:4/5;overflow:hidden;border-radius:4px;background:var(--crema-2);position:relative;}
+  .detail-img img{width:100%;height:100%;object-fit:cover;}
+  .detail-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,0.9);color:var(--tinta);font-size:18px;cursor:pointer;}
+  .thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  .thumb{width:64px;height:64px;border-radius:4px;background-size:cover;background-position:center;cursor:pointer;border:2px solid transparent;}
+  .thumb.active{border-color:var(--vino);}
+  .detail h1{font-size:clamp(28px,5vw,38px);font-weight:600;margin:10px 0 16px;}
+  .detail .price-lg{display:block;font-size:26px;font-weight:700;color:var(--vino);margin-bottom:16px;}
+  .detail .long{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;line-height:1.6;color:var(--tinta-suave);margin:0 0 24px;}
+  .policy{background:#fff;border:1px solid rgba(184,134,59,0.3);border-radius:6px;padding:18px 20px;margin:0 0 24px;font-size:14px;line-height:1.6;color:var(--tinta-suave);}
+  .policy strong{color:var(--tinta);}
+  /* Carrito */
+  .cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--crema);z-index:102;box-shadow:-8px 0 30px rgba(43,36,32,0.2);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s;}
+  .cart-drawer.open{transform:translateX(0);}
+  .cart-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid rgba(184,134,59,0.3);}
+  .cart-head h3{font-size:24px;font-weight:600;margin:0;}
+  .cart-items{flex:1;overflow-y:auto;padding:12px 24px;}
+  .citem{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid rgba(184,134,59,0.2);}
+  .citem img{width:60px;height:60px;object-fit:cover;border-radius:4px;background:var(--crema-2);}
+  .citem .ci-name{font-weight:600;font-size:14px;}
+  .citem .ci-price{color:var(--vino);font-weight:700;font-size:14px;margin-top:4px;}
+  .qty{display:flex;align-items:center;gap:8px;margin-top:6px;}
+  .qty button{width:26px;height:26px;border:1px solid rgba(43,36,32,0.2);background:#fff;border-radius:4px;cursor:pointer;font-size:15px;}
+  .ci-remove{background:none;border:none;color:var(--tinta-suave);cursor:pointer;font-size:12px;text-decoration:underline;margin-left:auto;align-self:flex-start;}
+  .cart-foot{padding:20px 24px;border-top:1px solid rgba(184,134,59,0.3);}
+  .cart-total{display:flex;justify-content:space-between;font-size:18px;font-weight:700;margin-bottom:16px;}
+  .wa-btn{display:block;width:100%;text-align:center;background:var(--vino);color:var(--crema);text-decoration:none;padding:15px;border-radius:4px;font-weight:600;font-size:15px;border:none;cursor:pointer;}
+  .wa-btn:hover{background:var(--vino-osc);}
+  .cart-empty{text-align:center;color:var(--tinta-suave);padding:40px 20px;}
+  .close-x{background:none;border:none;font-size:26px;line-height:1;color:var(--tinta);cursor:pointer;}
+  .loading{text-align:center;padding:80px 20px;color:var(--tinta-suave);}
+  @media(max-width:520px){ .hrow{justify-content:center;} nav{order:3;width:100%;justify-content:center;} }
+</style>
+</head>
+<body>
+
+<!-- ============ CONFIG ============ -->
+<script>
+  // URL de tu API (Worker de Cloudflare). Si algún día cambia, se cambia aquí.
+  const API = "https://flor-de-lis-api.shweb-mty.workers.dev";
+  // Número de WhatsApp para confirmar pedidos (formato internacional, sin + ni espacios).
+  // TODO: reemplazar por el número real del negocio.
+  const WHATSAPP = "5218100000000";
+</script>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="hrow wrap">
+    <a href="#inicio" class="brand">
+      <svg width="24" height="30" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 0C11 6 9 11 9 16c0 4 3 7 7 7s7-3 7-7c0-5-2-10-7-16z" fill="#b8863b"></path>
+        <path d="M9 12c-5 1-8 5-7 9 1 3 4 5 7 4 2-1 3-3 3-5-3-1-4-4-3-8z" fill="#b8863b"></path>
+        <path d="M23 12c5 1 8 5 7 9-1 3-4 5-7 4-2-1-3-3-3-5 3-1 4-4 3-8z" fill="#b8863b"></path>
+        <rect x="10" y="24" width="12" height="3" rx="1.5" fill="#b8863b"></rect>
+        <path d="M14 27h4v10a2 2 0 01-2 2 2 2 0 01-2-2V27z" fill="#b8863b"></path>
+      </svg>
+      <span class="serif">Flor de Lis</span>
+    </a>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#nosotros">Nosotros</a>
+    </nav>
+    <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2b2420" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8h12l-1 12H7L6 8z"></path><path d="M9 8V6a3 3 0 016 0v2"></path>
+      </svg>
+      <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="inicio" class="hero wrap">
+  <div>
+    <span class="eyebrow">Fe hecha artesanía</span>
+    <h1 class="serif">Artículos religiosos con el sello de la flor de lis</h1>
+    <p>Rosarios, joyería, bolsos y artículos para el hogar. Piezas para acompañar tu fe y la de tu familia.</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <a href="#catalogo" class="cta cta-solid">Ver catálogo</a>
+      <a href="#nosotros" class="cta cta-ghost">Nuestra historia</a>
+    </div>
+  </div>
+  <div class="hero-media">
+    <div class="hero-frame">
+      <img id="heroImg" alt="Artículos religiosos Flor de Lis"
+           src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='560'%3E%3Crect width='800' height='560' fill='%23efe6d8'/%3E%3C/svg%3E">
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATÁLOGO ============ -->
+<section id="catalogo">
+  <div class="wrap">
+    <span class="eyebrow">Catálogo</span>
+    <h2 class="serif">Piezas para tu fe y tu hogar</h2>
+    <p class="cat-intro">Cada artículo lleva el sello de la flor de lis, símbolo de pureza y devoción.</p>
+    <div class="pills" id="pills"></div>
+    <div class="grid" id="grid">
+      <div class="loading">Cargando catálogo…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOSOTROS ============ -->
+<section id="nosotros" class="wrap">
+  <div class="about-art"><span class="serif" style="color:var(--tinta-suave);font-size:15px;">Flor de Lis</span></div>
+  <div>
+    <span class="eyebrow">Nuestra historia</span>
+    <h2 class="serif">Fe, oficio y una flor que nos representa</h2>
+    <p>Desde hace generaciones, la flor de lis ha sido símbolo de pureza, fe y devoción mariana. En Flor de Lis reunimos piezas pensadas para acompañar la oración diaria y los momentos importantes de tu familia: bautizos, primeras comuniones, bodas y el altar de cada hogar.</p>
+    <p>Cada artículo se envía con cuidado, como una bendición más para quien lo recibe. A petición, algunas piezas pueden ser bendecidas por un sacerdote antes del envío.</p>
+    <span class="serif" style="font-style:italic;font-size:17px;color:var(--tinta);">— Familia fundadora, Flor de Lis</span>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fcol">
+        <div class="brand" style="margin-bottom:14px;">
+          <svg width="22" height="27" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 0C11 6 9 11 9 16c0 4 3 7 7 7s7-3 7-7c0-5-2-10-7-16z" fill="#b8863b"></path>
+            <path d="M9 12c-5 1-8 5-7 9 1 3 4 5 7 4 2-1 3-3 3-5-3-1-4-4-3-8z" fill="#b8863b"></path>
+            <path d="M23 12c5 1 8 5 7 9-1 3-4 5-7 4-2-1-3-3-3-5 3-1 4-4 3-8z" fill="#b8863b"></path>
+            <rect x="10" y="24" width="12" height="3" rx="1.5" fill="#b8863b"></rect>
+            <path d="M14 27h4v10a2 2 0 01-2 2 2 2 0 01-2-2V27z" fill="#b8863b"></path>
+          </svg>
+          <span class="serif" style="font-size:21px;color:var(--crema);">Flor de Lis</span>
+        </div>
+        <p style="font-size:14px;line-height:1.6;color:rgba(248,243,234,0.65);max-width:280px;margin:0;">Artículos religiosos artesanales para acompañar la fe de tu hogar.</p>
+      </div>
+      <div class="fcol">
+        <span class="h">Explorar</span>
+        <a href="#inicio">Inicio</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#nosotros">Nosotros</a>
+      </div>
+      <div class="fcol">
+        <span class="h">Contacto</span>
+        <a href="#" style="cursor:default;">Monterrey, N.L., México</a>
+        <a href="#" style="cursor:default;">Pedidos por WhatsApp</a>
+        <a href="#" style="cursor:default;">hola@flordelis.mx</a>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>© 2026 Flor de Lis. Hecho con fe y devoción.</span>
+      <a onclick="void(0)" style="font-size:11px;color:rgba(248,243,234,0.35);cursor:pointer;text-decoration:none;">Aa</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ DETALLE DE PRODUCTO ============ -->
+<div class="panel" id="detailPanel">
+  <div class="detail" id="detailContent"></div>
+</div>
+
+<!-- ============ CARRITO ============ -->
+<div class="overlay" id="cartOverlay" onclick="closeCart()"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Carrito">
+  <div class="cart-head">
+    <h3 class="serif">Tu carrito</h3>
+    <button class="close-x" onclick="closeCart()" aria-label="Cerrar">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot" id="cartFoot" style="display:none">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
+    <button class="wa-btn" onclick="checkoutWhatsApp()">Pedir por WhatsApp</button>
+    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Coordinamos el pago y el envío contigo por WhatsApp.</p>
+  </div>
+</aside>
+
+<script>
+/* ================= ESTADO ================= */
+let PRODUCTS = [];      // catálogo cargado de la API
+let CATEGORIES = [];    // categorías de la API
+let activeCat = "Todos";
+let cart = loadCart();  // [{id, name, price, image, qty}]
+
+/* ================= CARGA INICIAL ================= */
+async function init(){
+  renderCartBadge();
+  try{
+    const [prods, cats] = await Promise.all([
+      fetch(API + "/api/products").then(r=>r.json()),
+      fetch(API + "/api/categories").then(r=>r.json()),
+    ]);
+    PRODUCTS = Array.isArray(prods) ? prods : [];
+    CATEGORIES = Array.isArray(cats) ? cats : [];
+    if(PRODUCTS[0] && PRODUCTS[0].images && PRODUCTS[0].images[0]){
+      document.getElementById("heroImg").src = PRODUCTS[0].images[0];
+    }
+    renderPills();
+    renderGrid();
+  }catch(err){
+    document.getElementById("grid").innerHTML =
+      '<div class="empty">No pudimos cargar el catálogo en este momento. Vuelve a intentar en unos minutos.</div>';
+  }
+}
+
+/* ================= CATÁLOGO ================= */
+function renderPills(){
+  const names = ["Todos", ...CATEGORIES.map(c=>c.name)];
+  document.getElementById("pills").innerHTML = names.map(n =>
+    `<button class="pill ${n===activeCat?'active':''}" onclick="selectCat('${n.replace(/'/g,"\\'")}')">${n}</button>`
+  ).join("");
+}
+function selectCat(name){ activeCat = name; renderPills(); renderGrid(); }
+
+function renderGrid(){
+  const list = activeCat==="Todos" ? PRODUCTS : PRODUCTS.filter(p=>p.category===activeCat);
+  const grid = document.getElementById("grid");
+  if(!list.length){
+    grid.innerHTML = '<div class="empty">Pronto habrá piezas disponibles en esta categoría.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(p=>{
+    const img = (p.images&&p.images[0])
+      ? `<img src="${p.images[0]}" alt="${esc(p.name)}" loading="lazy">`
+      : `<span class="noimg">Sin foto</span>`;
+    return `<div class="card" onclick="openProduct('${p.id}')">
+      <div class="card-img">${img}</div>
+      <div class="card-body">
+        <span class="card-cat">${esc(p.category)}</span>
+        <h3 class="serif">${esc(p.name)}</h3>
+        <p class="card-desc">${esc(p.description||"")}</p>
+        <div class="card-foot">
+          <span class="price">$${p.price}</span>
+          <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.id}')">Añadir</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ================= DETALLE ================= */
+let detailImgIdx = 0;
+async function openProduct(id){
+  const panel = document.getElementById("detailPanel");
+  const box = document.getElementById("detailContent");
+  box.innerHTML = '<div class="loading">Cargando…</div>';
+  panel.classList.add("open");
+  window.scrollTo(0,0);
+  let p;
+  try{ p = await fetch(API+"/api/products/"+id).then(r=>r.json()); }
+  catch{ p = PRODUCTS.find(x=>x.id===id); }
+  if(!p || p.error){ p = PRODUCTS.find(x=>x.id===id); }
+  if(!p){ closeProduct(); return; }
+  detailImgIdx = 0;
+  renderDetail(p);
+}
+function renderDetail(p){
+  const imgs = p.images||[];
+  const hasGallery = imgs.length>1;
+  const mainImg = imgs[detailImgIdx] || "";
+  const box = document.getElementById("detailContent");
+  box.innerHTML = `
+    <button class="back-btn" onclick="closeProduct()">← Volver al catálogo</button>
+    <div class="detail-grid">
+      <div>
+        <div class="detail-img">
+          ${mainImg?`<img src="${mainImg}" alt="${esc(p.name)}">`:`<span class="noimg" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--tinta-suave)">Sin foto</span>`}
+          ${hasGallery?`<button class="detail-nav" style="left:12px" onclick="galleryStep('${p.id}',-1)">‹</button>
+                        <button class="detail-nav" style="right:12px" onclick="galleryStep('${p.id}',1)">›</button>`:""}
+        </div>
+        ${hasGallery?`<div class="thumbs">${imgs.map((u,i)=>`<div class="thumb ${i===detailImgIdx?'active':''}" style="background-image:url('${u}')" onclick="setGallery('${p.id}',${i})"></div>`).join("")}</div>`:""}
+      </div>
+      <div>
+        <span class="card-cat">${esc(p.category)}</span>
+        <h1 class="serif">${esc(p.name)}</h1>
+        <span class="price-lg">$${p.price}</span>
+        <p class="long">${esc(p.description||"")}</p>
+        <div class="policy">
+          <p style="margin:0 0 8px"><strong>Pieza única:</strong> solo hay 1 unidad disponible. Si se agota, el restablecimiento tarda de 15 a 20 días.</p>
+          <p style="margin:0"><strong>Bendición:</strong> a petición, la pieza puede ser bendecida por un sacerdote antes del envío. Coordínalo con nosotros por WhatsApp.</p>
+        </div>
+        <button class="wa-btn" style="max-width:260px" onclick="addToCart('${p.id}');openCart()">Añadir al carrito</button>
+      </div>
+    </div>`;
+}
+function galleryStep(id,dir){
+  const p = curDetail(id); if(!p) return;
+  const n = (p.images||[]).length;
+  detailImgIdx = (detailImgIdx + dir + n) % n;
+  renderDetail(p);
+}
+function setGallery(id,i){ detailImgIdx=i; const p=curDetail(id); if(p) renderDetail(p); }
+function curDetail(id){ return PRODUCTS.find(x=>x.id===id); }
+function closeProduct(){ document.getElementById("detailPanel").classList.remove("open"); }
+
+/* ================= CARRITO ================= */
+function loadCart(){ try{ return JSON.parse(localStorage.getItem("fdl_cart")||"[]"); }catch{ return []; } }
+function saveCart(){ localStorage.setItem("fdl_cart", JSON.stringify(cart)); }
+function addToCart(id){
+  const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
+  const ex = cart.find(c=>c.id===id);
+  // Regla del negocio: solo 1 unidad por producto.
+  if(ex){ /* ya está, no se aumenta */ }
+  else cart.push({id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", qty:1});
+  saveCart(); renderCartBadge(); renderCartItems();
+}
+function removeFromCart(id){ cart = cart.filter(c=>c.id!==id); saveCart(); renderCartBadge(); renderCartItems(); }
+function renderCartBadge(){
+  const b = document.getElementById("cartBadge");
+  const n = cart.length;
+  b.textContent = n; b.style.display = n>0?"flex":"none";
+}
+function renderCartItems(){
+  const box = document.getElementById("cartItems");
+  const foot = document.getElementById("cartFoot");
+  if(!cart.length){
+    box.innerHTML = '<div class="cart-empty">Tu carrito está vacío.<br>Explora el catálogo y añade tus piezas.</div>';
+    foot.style.display="none"; return;
+  }
+  box.innerHTML = cart.map(c=>`
+    <div class="citem">
+      ${c.image?`<img src="${c.image}" alt="${esc(c.name)}">`:`<div style="width:60px;height:60px;border-radius:4px;background:var(--crema-2)"></div>`}
+      <div style="flex:1">
+        <div class="ci-name">${esc(c.name)}</div>
+        <div class="ci-price">$${c.price}</div>
+        <div style="font-size:12px;color:var(--tinta-suave);margin-top:4px">Pieza única · 1 unidad</div>
+      </div>
+      <button class="ci-remove" onclick="removeFromCart('${c.id}')">Quitar</button>
+    </div>`).join("");
+  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById("cartTotal").textContent = "$"+total;
+  foot.style.display="block";
+}
+function openCart(){ renderCartItems(); document.getElementById("cartOverlay").classList.add("open"); document.getElementById("cartDrawer").classList.add("open"); }
+function closeCart(){ document.getElementById("cartOverlay").classList.remove("open"); document.getElementById("cartDrawer").classList.remove("open"); }
+
+function checkoutWhatsApp(){
+  if(!cart.length) return;
+  const lines = cart.map(c=>`• ${c.name} — $${c.price}`).join("%0A");
+  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const msg = `Hola, quiero hacer un pedido en Flor de Lis:%0A%0A${lines}%0A%0ATotal: $${total}%0A%0A¿Me ayudas a coordinar el pago y el envío?`;
+  window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, "_blank");
+}
+
+/* ================= UTIL ================= */
+function esc(s){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+init();
+</script>
+</body>
+</html>
