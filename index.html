@@ -103,6 +103,15 @@
   .vopt.sel{background:var(--vino);color:var(--crema);border-color:var(--vino);}
   .vopt.sold{background:var(--crema-2);color:var(--tinta-suave);border-color:var(--crema-2);cursor:not-allowed;text-decoration:line-through;}
   .vopt .st{display:block;font-size:10px;font-weight:600;letter-spacing:.3px;margin-top:2px;text-transform:uppercase;text-decoration:none;}
+  /* Selector de cantidad en el detalle */
+  .qtypick{display:flex;align-items:center;gap:14px;margin:0 0 22px;}
+  .qtypick .ql{font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--tinta);}
+  .qtypick .qbox{display:flex;align-items:center;gap:0;border:1.5px solid rgba(110,31,47,0.35);border-radius:6px;overflow:hidden;}
+  .qtypick .qbox button{width:40px;height:40px;border:none;background:#fff;color:var(--vino);font-size:20px;line-height:1;cursor:pointer;}
+  .qtypick .qbox button:hover:not(:disabled){background:rgba(110,31,47,0.06);}
+  .qtypick .qbox button:disabled{opacity:.35;cursor:not-allowed;}
+  .qtypick .qbox .qnum{min-width:46px;text-align:center;font-size:16px;font-weight:700;}
+  .qtypick .qhint{font-size:12px;color:var(--tinta-suave);}
   .policy{background:#fff;border:1px solid rgba(184,134,59,0.3);border-radius:6px;padding:18px 20px;margin:0 0 24px;font-size:14px;line-height:1.6;color:var(--tinta-suave);}
   .policy strong{color:var(--tinta);}
   .cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--crema);z-index:102;box-shadow:-8px 0 30px rgba(43,36,32,0.2);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s;}
@@ -268,6 +277,7 @@ let activeCat = "Todos";
 let cart = loadCart();       // [{key, id, name, price, image, variantId, variantName, qty, stock}]
 let detailImgIdx = 0;
 let selectedVariant = null;  // {id, name, stock} de la variante elegida en el detalle
+let detailQty = 1;           // cantidad elegida en el detalle
 
 /* ================= HELPERS DE VARIANTES/STOCK ================= */
 // ¿El producto se maneja por variantes?
@@ -364,7 +374,13 @@ async function openProduct(id){
   if(idx>=0) PRODUCTS[idx] = p;
   detailImgIdx = 0;
   selectedVariant = null;
+  detailQty = 1;
   renderDetail(p);
+}
+// Stock disponible según el estado actual del detalle (con o sin variante elegida)
+function detailAvailStock(p){
+  if(hasVariants(p)) return selectedVariant ? Number(selectedVariant.stock) : 0;
+  return plainStock(p);
 }
 function renderDetail(p){
   const imgs = p.images||[];
@@ -387,6 +403,23 @@ function renderDetail(p){
         <div class="vlabel">Elige una opción</div>
         <div class="vopts">${opts}</div>
       </div>`;
+  }
+
+  // Selector de cantidad (solo si hay algo que se pueda comprar ya)
+  const avail = detailAvailStock(p);
+  const showQty = !sold && (!hasVariants(p) || selectedVariant);
+  if(detailQty > avail) detailQty = Math.max(1, avail);
+  let qtyHtml = "";
+  if(showQty){
+    qtyHtml = `<div class="qtypick">
+      <span class="ql">Cantidad</span>
+      <div class="qbox">
+        <button onclick="stepDetailQty('${p.id}',-1)" ${detailQty<=1?'disabled':''}>−</button>
+        <span class="qnum" id="detailQtyNum">${detailQty}</span>
+        <button onclick="stepDetailQty('${p.id}',1)" ${detailQty>=avail?'disabled':''}>+</button>
+      </div>
+      ${avail<=5?`<span class="qhint">Solo ${avail} disponible${avail===1?'':'s'}</span>`:''}
+    </div>`;
   }
 
   // Botón principal
@@ -419,6 +452,7 @@ function renderDetail(p){
         <span class="price-lg">$${p.price}</span>
         <p class="long">${esc(p.description||"")}</p>
         ${variantsHtml}
+        ${qtyHtml}
         <div class="policy">
           <p style="margin:0 0 8px"><strong>Disponibilidad:</strong> piezas limitadas. Si algo se agota, el restablecimiento tarda de 15 a 20 días.</p>
           <p style="margin:0"><strong>Bendición:</strong> a petición, la pieza puede ser bendecida por un sacerdote antes del envío. Coordínalo con nosotros por WhatsApp.</p>
@@ -432,6 +466,15 @@ function selectVariant(pid, vid){
   const p = PRODUCTS.find(x=>x.id===pid); if(!p) return;
   const v = (p.variants||[]).find(x=>x.id===vid); if(!v || Number(v.stock)<=0) return;
   selectedVariant = { id:v.id, name:v.name, stock:Number(v.stock) };
+  detailQty = 1; // reiniciar cantidad al cambiar de opción
+  renderDetail(p);
+}
+function stepDetailQty(pid, dir){
+  const p = PRODUCTS.find(x=>x.id===pid); if(!p) return;
+  const avail = detailAvailStock(p);
+  const next = detailQty + dir;
+  if(next<1 || next>avail) return;
+  detailQty = next;
   renderDetail(p);
 }
 function galleryStep(id,dir){
@@ -475,39 +518,41 @@ function reconcileCartStock(){
 }
 
 // Producto SIN variantes
-function addPlainToCart(id){
+function addPlainToCart(id, qty){
   const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
   const stock = plainStock(p);
   if(stock<=0){ flashAdd("Este producto está agotado."); return; }
+  qty = Math.max(1, Math.min(Number(qty)||1, stock));
   const key = p.id;
   const ex = cart.find(c=>c.key===key);
   if(ex){
     if(ex.qty>=stock){ flashAdd("Ya tienes el máximo disponible en el carrito."); return; }
-    ex.qty++;
+    ex.qty = Math.min(ex.qty + qty, stock);
   }else{
-    cart.push({key, id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId:null, variantName:null, qty:1, stock});
+    cart.push({key, id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId:null, variantName:null, qty, stock});
   }
   saveCart(); renderCartBadge(); renderCartItems();
-  flashAdd("Añadido al carrito.");
+  flashAdd(qty>1?`Añadidas ${qty} unidades.`:"Añadido al carrito.");
 }
 
-// Producto CON variantes (usa la variante seleccionada)
+// Producto CON variantes (usa la variante seleccionada y la cantidad del detalle)
 function addVariantToCart(id){
   const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
   if(!selectedVariant){ flashAdd("Elige una opción primero."); return; }
   const v = (p.variants||[]).find(x=>x.id===selectedVariant.id);
   if(!v || Number(v.stock)<=0){ flashAdd("Esa opción está agotada."); return; }
   const stock = Number(v.stock);
+  const qty = Math.max(1, Math.min(detailQty, stock));
   const key = p.id + "::" + v.id;
   const ex = cart.find(c=>c.key===key);
   if(ex){
     if(ex.qty>=stock){ flashAdd("Ya tienes el máximo disponible de esa opción."); return; }
-    ex.qty++;
+    ex.qty = Math.min(ex.qty + qty, stock);
   }else{
-    cart.push({key, id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId:v.id, variantName:v.name, qty:1, stock});
+    cart.push({key, id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId:v.id, variantName:v.name, qty, stock});
   }
   saveCart(); renderCartBadge(); renderCartItems();
-  flashAdd(`Añadido: ${v.name}.`);
+  flashAdd(qty>1?`Añadidas ${qty} · ${v.name}.`:`Añadido: ${v.name}.`);
   openCart();
 }
 
