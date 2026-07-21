@@ -136,6 +136,27 @@
   .wa-btn:hover{background:var(--vino-osc);}
   .wa-btn:disabled{background:var(--crema-2);color:var(--tinta-suave);cursor:not-allowed;}
   .cart-empty{text-align:center;color:var(--tinta-suave);padding:40px 20px;}
+  /* Modal de datos del cliente (checkout) */
+  .co-overlay{position:fixed;inset:0;z-index:110;background:rgba(43,36,32,0.55);display:none;align-items:center;justify-content:center;padding:20px;}
+  .co-overlay.open{display:flex;}
+  .co-modal{background:var(--crema);border-radius:10px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;}
+  .co-modal h3{font-family:'Cormorant Garamond',serif;font-size:26px;margin:0 0 6px;}
+  .co-modal .co-sub{font-size:13px;color:var(--tinta-suave);margin:0 0 20px;line-height:1.5;}
+  .co-field{margin-bottom:14px;}
+  .co-field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .co-field input{width:100%;padding:11px 12px;border:1px solid var(--gris);border-radius:6px;font-family:inherit;font-size:14px;background:#fff;}
+  .co-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;margin:18px 0;padding-top:14px;border-top:1px solid rgba(184,134,59,0.3);}
+  .co-err{color:var(--vino);font-size:13px;margin:6px 0 0;min-height:18px;}
+  .co-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+  .co-note{font-size:11px;color:var(--tinta-suave);text-align:center;line-height:1.5;margin:6px 0 0;}
+  /* Banner de retorno de pago */
+  .paybanner{position:fixed;top:0;left:0;right:0;z-index:120;padding:16px 20px;text-align:center;font-size:15px;font-weight:600;color:#fff;display:none;}
+  .paybanner.show{display:block;}
+  .paybanner.exito{background:#2f7d4f;}
+  .paybanner.pendiente{background:var(--oro);}
+  .paybanner.error{background:var(--vino);}
+  .paybanner button{background:rgba(255,255,255,0.25);border:none;color:#fff;border-radius:4px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;margin-left:12px;}
+  .gris{color:var(--gris);}
   .close-x{background:none;border:none;font-size:26px;line-height:1;color:var(--tinta);cursor:pointer;}
   .loading{text-align:center;padding:80px 20px;color:var(--tinta-suave);}
   .addmsg{font-size:13px;color:var(--tinta-suave);margin:10px 0 0;min-height:18px;}
@@ -264,10 +285,35 @@
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-foot" id="cartFoot" style="display:none">
     <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
-    <button class="wa-btn" onclick="checkoutWhatsApp()">Pedir por WhatsApp</button>
-    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Coordinamos el pago y el envío contigo por WhatsApp.</p>
+    <button class="wa-btn" onclick="openCheckout()">Pagar con tarjeta</button>
+    <button class="wa-btn" style="background:#fff;color:var(--vino);border:1.5px solid var(--vino);margin-top:10px" onclick="checkoutWhatsApp()">Pedir por WhatsApp</button>
+    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Pago seguro con Mercado Pago, o coordina por WhatsApp. El envío se acuerda por WhatsApp.</p>
   </div>
 </aside>
+
+<!-- Banner de retorno de pago -->
+<div class="paybanner" id="payBanner">
+  <span id="payBannerText"></span>
+  <button onclick="dismissBanner()">Entendido</button>
+</div>
+
+<!-- Modal de datos del cliente (antes de pagar con tarjeta) -->
+<div class="co-overlay" id="coOverlay">
+  <div class="co-modal">
+    <h3 class="serif">Tus datos</h3>
+    <p class="co-sub">Para procesar tu pago de forma segura con Mercado Pago. El envío lo coordinamos por WhatsApp después.</p>
+    <div class="co-field"><label>Nombre completo</label><input id="co_name" placeholder="Ej. María Hernández"></div>
+    <div class="co-field"><label>Correo electrónico</label><input id="co_email" type="email" placeholder="tucorreo@ejemplo.com"></div>
+    <div class="co-field"><label>Teléfono (WhatsApp)</label><input id="co_phone" type="tel" placeholder="10 dígitos"></div>
+    <div class="co-total"><span>Total a pagar</span><span id="co_total">$0</span></div>
+    <div class="co-err" id="co_err"></div>
+    <div class="co-actions">
+      <button class="wa-btn" id="co_pay_btn" onclick="startPayment()">Continuar al pago</button>
+      <button class="wa-btn" style="background:#fff;color:var(--vino);border:1.5px solid var(--vino)" onclick="closeCheckout()">Cancelar</button>
+    </div>
+    <p class="co-note">Serás redirigido a Mercado Pago para completar tu pago con tarjeta.</p>
+  </div>
+</div>
 
 <script>
 /* ================= ESTADO ================= */
@@ -604,6 +650,72 @@ function renderCartItems(){
 function openCart(){ renderCartItems(); document.getElementById("cartOverlay").classList.add("open"); document.getElementById("cartDrawer").classList.add("open"); }
 function closeCart(){ document.getElementById("cartOverlay").classList.remove("open"); document.getElementById("cartDrawer").classList.remove("open"); }
 
+/* ================= CHECKOUT CON TARJETA (Mercado Pago) ================= */
+function openCheckout(){
+  if(!cart.length) return;
+  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  document.getElementById("co_total").textContent = "$"+total;
+  document.getElementById("co_err").textContent = "";
+  document.getElementById("coOverlay").classList.add("open");
+}
+function closeCheckout(){ document.getElementById("coOverlay").classList.remove("open"); }
+function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+async function startPayment(){
+  const btn = document.getElementById("co_pay_btn");
+  const errEl = document.getElementById("co_err");
+  errEl.textContent = "";
+  const name = document.getElementById("co_name").value.trim();
+  const email = document.getElementById("co_email").value.trim();
+  const phone = document.getElementById("co_phone").value.trim();
+  if(!name){ errEl.textContent = "Escribe tu nombre completo."; return; }
+  if(!validEmail(email)){ errEl.textContent = "Escribe un correo válido."; return; }
+
+  const items = cart.map(c=>({ product_id:c.id, variant_id:c.variantId||null, qty:c.qty }));
+  btn.disabled = true; btn.textContent = "Preparando tu pago…";
+  try{
+    const res = await fetch(API + "/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customer:{name,email,phone}, items }),
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || !data.init_point){
+      errEl.textContent = data.error || "No se pudo iniciar el pago. Intenta de nuevo.";
+      btn.disabled = false; btn.textContent = "Continuar al pago";
+      return;
+    }
+    // Redirigir a la ventana de pago de Mercado Pago
+    window.location.href = data.init_point;
+  }catch(err){
+    errEl.textContent = "Hubo un problema de conexión. Intenta de nuevo.";
+    btn.disabled = false; btn.textContent = "Continuar al pago";
+  }
+}
+
+/* ================= BANNER DE RETORNO DE PAGO ================= */
+function showPaymentBanner(){
+  const params = new URLSearchParams(window.location.search);
+  const estado = params.get("pago");
+  if(!estado) return;
+  const banner = document.getElementById("payBanner");
+  const txt = document.getElementById("payBannerText");
+  if(estado==="exito"){
+    banner.classList.add("exito");
+    txt.textContent = "¡Pago recibido! Gracias por tu compra. Te contactaremos por WhatsApp para coordinar el envío.";
+    cart = []; saveCart(); renderCartBadge(); // vaciar carrito tras compra exitosa
+  }else if(estado==="pendiente"){
+    banner.classList.add("pendiente");
+    txt.textContent = "Tu pago está pendiente de confirmación. Te avisaremos en cuanto se acredite.";
+  }else if(estado==="error"){
+    banner.classList.add("error");
+    txt.textContent = "El pago no se completó. Puedes intentarlo de nuevo cuando quieras.";
+  }else{ return; }
+  banner.classList.add("show");
+  // limpiar el parámetro de la URL para que no reaparezca al recargar
+  window.history.replaceState({}, "", window.location.pathname);
+}
+function dismissBanner(){ document.getElementById("payBanner").classList.remove("show"); }
+
 function checkoutWhatsApp(){
   if(!cart.length) return;
   const lines = cart.map(c=>{
@@ -619,6 +731,7 @@ function checkoutWhatsApp(){
 /* ================= UTIL ================= */
 function esc(s){ return String(s??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
+showPaymentBanner();
 init();
 </script>
 </body>
