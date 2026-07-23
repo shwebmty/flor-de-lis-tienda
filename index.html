@@ -531,6 +531,21 @@ let buyNowItem = null;        // {id,name,price,image,variantId,variantName,qty,
 function hasVariants(p){ return Array.isArray(p.variants) && p.variants.length>0; }
 // Precio efectivo (con descuento si el producto trae uno vigente del servidor).
 function effPrice(p){ return (p.discount && p.discount.final_price!=null) ? p.discount.final_price : p.price; }
+// Total de una línea aplicando el descuento por cantidad (2x1, 3x2, % desde N).
+// Misma fórmula que el servidor; el servidor siempre manda al cobrar.
+// Total de una línea del carrito, consultando el descuento por cantidad actual del producto.
+function cartLineTotal(c){
+  const p = PRODUCTS.find(x=>x.id===c.id);
+  return lineTotal(c.price, c.qty, p ? p.qty_discount : null);
+}
+function lineTotal(unit, qty, qd){
+  if(!qd || qty < qd.min) return unit*qty;
+  if(qd.type==="nxm"){
+    const grupos = Math.floor(qty/qd.min), resto = qty % qd.min;
+    return Math.round(grupos*qd.value*unit + resto*unit);
+  }
+  return Math.round(unit*qty*(1 - qd.value/100));
+}
 // Stock disponible de un producto sin variantes (null = no controlado => se trata como 1)
 function plainStock(p){ return (p.stock==null) ? 1 : Number(p.stock); }
 // ¿Está todo agotado?
@@ -600,7 +615,8 @@ function renderGrid(){
     }else{
       btn = `<button class="add-btn" onclick="event.stopPropagation();addPlainToCart('${p.id}')">Añadir</button>`;
     }
-    const discBadge = p.discount ? `<span class="disc-badge">${esc(p.discount.label)}</span>` : "";
+    const discBadge = (p.discount ? `<span class="disc-badge">${esc(p.discount.label)}</span>` : "")
+      + (p.qty_discount ? `<span class="disc-badge" style="background:var(--oro);margin-left:6px">🎁 ${esc(p.qty_discount.label)}</span>` : "");
     const priceHtml = p.discount
       ? `<span><span class="price-old">$${p.discount.original}</span><span class="price">$${p.discount.final_price}</span></span>`
       : `<span class="price">$${p.price}</span>`;
@@ -715,6 +731,7 @@ function renderDetail(p){
         <span class="card-cat">${esc(p.category)}</span>
         <h1 class="serif">${esc(p.name)}</h1>
         ${p.discount ? `<span class="disc-badge-lg">${esc(p.discount.label)}</span><br>` : ""}
+        ${p.qty_discount ? `<span class="disc-badge-lg" style="background:var(--oro)">🎁 ${esc(p.qty_discount.label)}</span><br>` : ""}
         ${p.discount
           ? `<span class="price-lg"><span class="price-old" style="font-size:20px">$${p.discount.original}</span>$${p.discount.final_price}</span>`
           : `<span class="price-lg">$${p.price}</span>`}
@@ -841,7 +858,8 @@ function buyNow(id){
   const qty = Math.max(1, Math.min(detailQty, stock));
   checkoutMode = "directo";
   buyNowItem = { id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId, variantName, qty, stock };
-  showCoModal(buyNowItem.price * buyNowItem.qty + calcEnvio(buyNowItem.price * buyNowItem.qty));
+  const sub = lineTotal(buyNowItem.price, buyNowItem.qty, p.qty_discount);
+  showCoModal(sub + calcEnvio(sub));
 }
 
 function flashAdd(msg){
@@ -875,7 +893,10 @@ function renderCartItems(){
       <div style="flex:1">
         <div class="ci-name">${esc(c.name)}</div>
         ${c.variantName?`<div class="ci-var">${esc(c.variantName)}</div>`:""}
-        <div class="ci-price">$${c.price}</div>
+        <div class="ci-price">$${c.price}${(()=>{
+          const t = cartLineTotal(c), normal = c.price*c.qty;
+          return t < normal ? ` <span style="color:var(--vino);font-weight:700">· ahorras $${normal-t}</span>` : "";
+        })()}</div>
         <div class="qty">
           <button onclick="changeQty('${c.key}',-1)">−</button>
           <span>${c.qty}</span>
@@ -885,7 +906,7 @@ function renderCartItems(){
       </div>
       <button class="ci-remove" onclick="removeFromCart('${c.key}')">Quitar</button>
     </div>`).join("");
-  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const subtotal = cart.reduce((s,c)=>s+cartLineTotal(c),0);
   const envio = calcEnvio(subtotal);
   const total = subtotal + envio;
   const totalBox = document.getElementById("cartTotal");
@@ -909,7 +930,7 @@ function openCheckout(){
   if(!cart.length) return;
   checkoutMode = "carrito";
   buyNowItem = null;
-  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const subtotal = cart.reduce((s,c)=>s+cartLineTotal(c),0);
   showCoModal(subtotal + calcEnvio(subtotal));
 }
 function showCoModal(total){
@@ -1016,9 +1037,9 @@ function checkoutWhatsApp(){
   const lines = cart.map(c=>{
     const vpart = c.variantName ? ` (${c.variantName})` : "";
     const qpart = c.qty>1 ? ` x${c.qty}` : "";
-    return `• ${c.name}${vpart}${qpart} — $${c.price*c.qty}`;
+    return `• ${c.name}${vpart}${qpart} — $${cartLineTotal(c)}`;
   }).join("%0A");
-  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const total = cart.reduce((s,c)=>s+cartLineTotal(c),0);
   const msg = `Hola, quiero hacer un pedido en Flor de Lis:%0A%0A${lines}%0A%0ATotal: $${total}%0A%0A¿Me ayudas a coordinar el pago y el envío?`;
   window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, "_blank");
 }
