@@ -194,7 +194,10 @@
 
 <script>
   const API = "https://flor-de-lis-api.shweb-mty.workers.dev";
-  const WHATSAPP = "5218100000000"; // TODO: número real del negocio
+  // WhatsApp DESACTIVADO por ahora: toda la comunicación es por correo.
+  // Para reactivarlo: pon el número real aquí y vuelve a mostrar el botón "Pedir por WhatsApp"
+  // en el carrito (ver checkoutWhatsApp más abajo, que sigue funcional).
+  const WHATSAPP = ""; // ej. "5218112345678"
 </script>
 
 <header>
@@ -289,8 +292,8 @@
       <div class="fcol">
         <span class="h">Contacto</span>
         <a href="#" style="cursor:default;">Monterrey, N.L., México</a>
-        <a href="#" style="cursor:default;">Pedidos por WhatsApp</a>
-        <a href="#" style="cursor:default;">hola@flordelis.mx</a>
+        <a href="mailto:hola@florlis.com">Pedidos y dudas por correo</a>
+        <a href="#" style="cursor:default;">hola@florlis.com</a>
       </div>
       <div class="fcol">
         <span class="h">Legal</span>
@@ -334,11 +337,11 @@
     <p><strong>Flor de Lis</strong>, con domicilio en Monterrey, Nuevo León, México, es responsable del tratamiento de tus datos personales cuando compras o te pones en contacto a través de este sitio.</p>
 
     <h2>2. Datos personales que recabamos</h2>
-    <p>Para procesar tu pedido, podemos solicitarte: nombre completo, correo electrónico, número de teléfono / WhatsApp y dirección de envío.</p>
+    <p>Para procesar tu pedido, podemos solicitarte: nombre completo, correo electrónico, número de teléfono y dirección de envío.</p>
     <p>No recabamos datos sensibles (salud, creencias religiosas específicas, datos biométricos, etc.). El hecho de comprar artículos religiosos no implica que registremos ni infiramos tus creencias personales.</p>
 
     <h2>3. Finalidades del tratamiento</h2>
-    <p>Usamos tus datos para: procesar y confirmar tu pedido y tu pago; coordinar el envío y darte seguimiento por WhatsApp; emitir tu factura (CFDI) cuando la solicites; responder tus dudas o solicitudes de servicio (por ejemplo, la bendición de una pieza); y cumplir obligaciones legales y fiscales. No usamos tus datos para publicidad de terceros ni los vendemos a nadie.</p>
+    <p>Usamos tus datos para: procesar y confirmar tu pedido y tu pago; coordinar el envío y darte seguimiento por correo electrónico; emitir tu factura (CFDI) cuando la solicites; responder tus dudas o solicitudes de servicio (por ejemplo, la bendición de una pieza); y cumplir obligaciones legales y fiscales. No usamos tus datos para publicidad de terceros ni los vendemos a nadie.</p>
 
     <h2>4. Con quién compartimos tus datos</h2>
     <p>Para poder operar la tienda, algunos datos se comparten únicamente con los proveedores que hacen posible tu compra:</p>
@@ -353,7 +356,7 @@
     <p>Este sitio no usa cookies de publicidad ni rastreadores de terceros. Usamos el almacenamiento local de tu navegador únicamente para recordar los productos que agregaste a tu carrito mientras navegas — esa información se queda en tu propio dispositivo.</p>
 
     <h2>6. Cómo ejercer tus derechos ARCO</h2>
-    <p>Tienes derecho a Acceder, Rectificar o Cancelar tus datos personales, así como a Oponerte a su uso (derechos ARCO). Para ejercerlos, escríbenos a <a class="inline" href="mailto:hola@flordelis.mx">hola@flordelis.mx</a> indicando tu nombre y el derecho que deseas ejercer.</p>
+    <p>Tienes derecho a Acceder, Rectificar o Cancelar tus datos personales, así como a Oponerte a su uso (derechos ARCO). Para ejercerlos, escríbenos a <a class="inline" href="mailto:hola@florlis.com">hola@florlis.com</a> indicando tu nombre y el derecho que deseas ejercer.</p>
 
     <h2>7. Cambios a este aviso</h2>
     <p>Si actualizamos este aviso de privacidad, publicaremos la nueva versión en esta misma página con su fecha de actualización.</p>
@@ -377,10 +380,10 @@
     <p>Cada producto se ofrece en <strong>una sola pieza disponible</strong>. Si un artículo se agota, el restablecimiento de inventario puede tardar de <strong>15 a 20 días</strong>.</p>
 
     <h2>3. Precios y pago</h2>
-    <p>Todos los precios se muestran en pesos mexicanos (MXN) e incluyen IVA. Aceptamos pago con tarjeta y en efectivo en OXXO a través de Mercado Pago. También puedes coordinar tu compra directamente por WhatsApp.</p>
+    <p>Todos los precios se muestran en pesos mexicanos (MXN) e incluyen IVA. Aceptamos pago con tarjeta y en efectivo en OXXO a través de Mercado Pago. Todo el seguimiento de tu compra se realiza por correo electrónico.</p>
 
     <h2>4. Servicio de bendición</h2>
-    <p>A solicitud del cliente, una pieza puede ser bendecida por un sacerdote antes de su envío. Este servicio se coordina directamente por WhatsApp al momento de tu pedido.</p>
+    <p>A solicitud del cliente, una pieza puede ser bendecida por un sacerdote antes de su envío. Solicítalo por correo al hacer tu pedido, escribiéndonos a <a class="inline" href="mailto:hola@florlis.com">hola@florlis.com</a>.</p>
 
     <h2>5. Envío</h2>
     <p>Consulta los tiempos, costos y responsabilidades de envío en nuestra <a class="inline" onclick="openLegal('envios')">Política de Envíos</a>.</p>
@@ -401,7 +404,7 @@
     <p>Estos términos se rigen por las leyes de los Estados Unidos Mexicanos, incluyendo la Ley Federal de Protección al Consumidor. Para cualquier controversia, las partes se someten a los tribunales competentes de Nuevo León, México, salvo que la ley del consumidor te otorgue un fuero distinto.</p>
 
     <h2>11. Contacto</h2>
-    <p>¿Dudas sobre estos términos? Escríbenos a <a class="inline" href="mailto:hola@flordelis.mx">hola@flordelis.mx</a>.</p>
+    <p>¿Dudas sobre estos términos? Escríbenos a <a class="inline" href="mailto:hola@florlis.com">hola@florlis.com</a>.</p>
 
     <div class="callout">Este documento es una plantilla base redactada según prácticas estándar de comercio electrónico en México, adaptada a las reglas de negocio que nos compartiste. Te recomendamos que un abogado la revise antes de operar con clientes reales.</div>
     </div>
@@ -410,25 +413,25 @@
     <p class="updated">Última actualización: 22 de julio de 2026</p>
 
     <h2>1. Cobertura</h2>
-    <p>Por el momento realizamos envíos dentro de México. Si necesitas un envío internacional, escríbenos por WhatsApp y evaluamos tu caso.</p>
+    <p>Por el momento realizamos envíos dentro de México. Si necesitas un envío internacional, escríbenos por correo y evaluamos tu caso.</p>
 
     <h2>2. Costo de envío</h2>
     <p>Aplicamos una tarifa plana de envío: <span class="placeholder">$150 MXN (por confirmar)</span>. Este monto se te informa antes de confirmar tu pedido, junto con el resto del cobro.</p>
 
     <h2>3. Tiempos</h2>
-    <p>Como cada pieza es única (solo 1 unidad disponible por producto), en cuanto confirmamos tu pago coordinamos el envío directamente por WhatsApp para darte el tiempo estimado de entrega. Si el artículo está agotado, el restablecimiento de inventario puede tardar de <strong>15 a 20 días</strong> antes de poder enviarlo.</p>
+    <p>Como cada pieza es única (solo 1 unidad disponible por producto), en cuanto confirmamos tu pago te escribimos por correo para darte el tiempo estimado de entrega. Si el artículo está agotado, el restablecimiento de inventario puede tardar de <strong>15 a 20 días</strong> antes de poder enviarlo.</p>
 
     <h2>4. Confirmación y seguimiento</h2>
-    <p>Por ahora, la confirmación del envío y el número de guía se comparten de forma manual por WhatsApp una vez que tu pieza sale de nuestras manos.</p>
+    <p>La confirmación del envío y el número de guía se te envían por correo electrónico una vez que tu pieza sale de nuestras manos.</p>
 
     <h2>5. Responsabilidad durante el transporte</h2>
     <p>Una vez que tu pedido es entregado a la empresa de paquetería, la responsabilidad de la entrega corresponde a dicha empresa. Si tu paquete se retrasa, se pierde o llega dañado por causas del transporte, te ayudamos a hacer el reclamo correspondiente ante la paquetería.</p>
 
     <h2>6. Piezas bendecidas</h2>
-    <p>Si solicitaste que tu pieza fuera bendecida por un sacerdote antes del envío, coordinamos ese paso contigo por WhatsApp; esto no debería representar una demora significativa en tu tiempo de entrega.</p>
+    <p>Si solicitaste que tu pieza fuera bendecida por un sacerdote antes del envío, coordinamos ese paso contigo por correo; esto no debería representar una demora significativa en tu tiempo de entrega.</p>
 
     <h2>7. Dudas sobre tu envío</h2>
-    <p>Escríbenos por WhatsApp o a <a class="inline" href="mailto:hola@flordelis.mx">hola@flordelis.mx</a> con tu nombre y número de pedido.</p>
+    <p>Escríbenos a <a class="inline" href="mailto:hola@florlis.com">hola@florlis.com</a> con tu nombre y número de pedido.</p>
 
     <div class="callout">Los montos y tiempos marcados como <span class="placeholder">pendientes</span> se actualizarán en cuanto confirmes tu tarifa de envío real y tu paquetería habitual.</div>
     </div>
@@ -438,7 +441,7 @@
 
     <div class="highlight">
       <strong>1. Tu derecho a cancelar la compra (5 días hábiles)</strong>
-      <p style="margin-top:10px;">Como compras con nosotros en línea, sin visitar un local físico, la LFPC (Art. 51, 53 y 56) te da derecho a <strong>cancelar tu compra sin dar ninguna explicación</strong>, dentro de los <strong>5 días hábiles</strong> siguientes a la entrega de tu pedido. Para ejercerlo, escríbenos por WhatsApp o correo dentro de ese plazo. Te reembolsamos el precio pagado por el producto; el costo de envío de regreso corre por tu cuenta (salvo que el motivo sea un defecto o error nuestro — ver punto 3).</p>
+      <p style="margin-top:10px;">Como compras con nosotros en línea, sin visitar un local físico, la LFPC (Art. 51, 53 y 56) te da derecho a <strong>cancelar tu compra sin dar ninguna explicación</strong>, dentro de los <strong>5 días hábiles</strong> siguientes a la entrega de tu pedido. Para ejercerlo, escríbenos por correo dentro de ese plazo. Te reembolsamos el precio pagado por el producto; el costo de envío de regreso corre por tu cuenta (salvo que el motivo sea un defecto o error nuestro — ver punto 3).</p>
     </div>
 
     <h2>2. Piezas únicas</h2>
@@ -456,13 +459,13 @@
     <p>Dentro de los 5 días hábiles del punto 1, una pieza bendecida se puede cancelar igual que cualquier otra. Pasado ese plazo, por su naturaleza ritual, las piezas que fueron bendecidas o exorcizadas a tu solicitud <strong>no admiten devolución por simple cambio de opinión</strong> — sí aplican en todo momento las garantías de la sección 3 si el producto llega dañado o defectuoso.</p>
 
     <h2>5. Cambio de opinión más allá de los 5 días</h2>
-    <p>Pasado el plazo legal de cancelación, y dado que nuestras piezas son de disponibilidad limitada, generalmente no aceptamos devoluciones adicionales por simple cambio de parecer. Si tu situación es distinta, escríbenos — evaluamos casos particulares por WhatsApp.</p>
+    <p>Pasado el plazo legal de cancelación, y dado que nuestras piezas son de disponibilidad limitada, generalmente no aceptamos devoluciones adicionales por simple cambio de parecer. Si tu situación es distinta, escríbenos por correo — evaluamos casos particulares.</p>
 
     <h2>6. Cómo solicitar una devolución</h2>
-    <p>Escríbenos por WhatsApp o a <a class="inline" href="mailto:hola@flordelis.mx">hola@flordelis.mx</a> con: tu nombre y número de pedido, fotos del producto (y del empaque, si el daño ocurrió en tránsito), y una breve descripción del motivo.</p>
+    <p>Escríbenos a <a class="inline" href="mailto:hola@florlis.com">hola@florlis.com</a> con: tu nombre y número de pedido, fotos del producto (y del empaque, si el daño ocurrió en tránsito), y una breve descripción del motivo.</p>
 
     <h2>7. Reembolsos</h2>
-    <p>Si tu compra fue con Mercado Pago, el reembolso se realiza al mismo medio de pago con el que compraste, según los tiempos de procesamiento de Mercado Pago. Si tu compra se coordinó por WhatsApp, acordamos contigo el medio de reembolso.</p>
+    <p>Si tu compra fue con Mercado Pago, el reembolso se realiza al mismo medio de pago con el que compraste, según los tiempos de procesamiento de Mercado Pago. Si tu compra se coordinó por otro medio, acordamos contigo el medio de reembolso.</p>
 
     <h2>8. Costo de envío de una devolución</h2>
     <p>Si cancelas dentro de tus 5 días hábiles de derecho (punto 1) sin que haya un defecto, el envío de regreso corre por tu cuenta. Si la devolución es por un defecto o error nuestro (punto 3), cubrimos nosotros ese costo.</p>
@@ -484,8 +487,7 @@
     <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
     <button class="wa-btn" style="background:transparent;color:var(--vino);border:1.5px solid rgba(110,31,47,0.3);margin-bottom:12px;font-weight:600" onclick="keepShopping()">← Seguir agregando productos</button>
     <button class="wa-btn" onclick="openCheckout()">Pagar con tarjeta</button>
-    <button class="wa-btn" style="background:#fff;color:var(--vino);border:1.5px solid var(--vino);margin-top:10px" onclick="checkoutWhatsApp()">Pedir por WhatsApp</button>
-    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Pago seguro con Mercado Pago, o coordina por WhatsApp.</p>
+    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Pago seguro con Mercado Pago. Todo el seguimiento de tu pedido lo haremos por correo electrónico.</p>
   </div>
 </aside>
 
@@ -499,11 +501,26 @@
 <div class="co-overlay" id="coOverlay">
   <div class="co-modal">
     <h3 class="serif">Tus datos</h3>
-    <p class="co-sub">Para procesar tu pago de forma segura con Mercado Pago. El envío lo coordinamos por WhatsApp después.</p>
+    <p class="co-sub">Necesitamos tus datos y la dirección de entrega para procesar tu pedido. Todo el seguimiento lo haremos por correo electrónico.</p>
     <div class="co-item" id="co_item_summary" style="display:none"></div>
     <div class="co-field"><label>Nombre completo</label><input id="co_name" placeholder="Ej. María Hernández"></div>
-    <div class="co-field"><label>Correo electrónico</label><input id="co_email" type="email" placeholder="tucorreo@ejemplo.com"></div>
-    <div class="co-field"><label>Teléfono (WhatsApp)</label><input id="co_phone" type="tel" placeholder="10 dígitos"></div>
+    <div class="co-field"><label>Correo electrónico <span style="color:var(--vino)">*</span></label><input id="co_email" type="email" placeholder="tucorreo@ejemplo.com"><span style="font-size:12px;color:var(--tinta-suave)">Aquí te enviaremos la confirmación y todo el seguimiento de tu pedido.</span></div>
+    <div class="co-field"><label>Teléfono</label><input id="co_phone" type="tel" placeholder="10 dígitos"></div>
+
+    <div style="border-top:1px solid rgba(184,134,59,0.3);margin:18px 0 14px;padding-top:14px">
+      <p style="font-size:14px;font-weight:700;color:var(--vino);margin:0 0 12px">Dirección de entrega</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="co-field" style="flex:2"><label>Calle</label><input id="co_calle" placeholder="Ej. Av. Constitución"></div>
+      <div class="co-field" style="flex:1"><label>Número</label><input id="co_numero" placeholder="123"></div>
+    </div>
+    <div class="co-field"><label>Colonia</label><input id="co_colonia" placeholder="Ej. Centro"></div>
+    <div style="display:flex;gap:10px">
+      <div class="co-field" style="flex:1"><label>Código postal</label><input id="co_cp" inputmode="numeric" placeholder="64000"></div>
+      <div class="co-field" style="flex:2"><label>Ciudad</label><input id="co_ciudad" placeholder="Ej. Monterrey"></div>
+    </div>
+    <div class="co-field"><label>Estado</label><input id="co_estado" placeholder="Ej. Nuevo León"></div>
+    <div class="co-field"><label>Referencias (opcional)</label><input id="co_ref" placeholder="Ej. casa blanca, entre calles..."></div>
     <div class="co-total"><span>Total a pagar</span><span id="co_total">$0</span></div>
     <div class="co-err" id="co_err"></div>
     <div class="co-actions">
@@ -740,7 +757,7 @@ function renderDetail(p){
         ${qtyHtml}
         <div class="policy">
           <p style="margin:0 0 8px"><strong>Disponibilidad:</strong> piezas limitadas. Si algo se agota, el restablecimiento tarda de 15 a 20 días.</p>
-          <p style="margin:0 0 8px"><strong>Bendición:</strong> a petición, la pieza puede ser bendecida por un sacerdote antes del envío. Coordínalo con nosotros por WhatsApp.</p>
+          <p style="margin:0 0 8px"><strong>Bendición:</strong> a petición, la pieza puede ser bendecida por un sacerdote antes del envío. Solicítalo por correo al hacer tu pedido.</p>
           <p style="margin:0 0 8px"><strong>Envío:</strong> una vez que el pedido es entregado a la empresa de paquetería, la responsabilidad de la entrega corresponde a dicha empresa.</p>
           <a href="#" onclick="openLegal('envios');return false;" style="font-size:13px;font-weight:600;">Ver política completa de envíos y devoluciones →</a>
         </div>
@@ -974,8 +991,22 @@ async function startPayment(){
   const name = document.getElementById("co_name").value.trim();
   const email = document.getElementById("co_email").value.trim();
   const phone = document.getElementById("co_phone").value.trim();
+  const dir = {
+    calle: document.getElementById("co_calle").value.trim(),
+    numero: document.getElementById("co_numero").value.trim(),
+    colonia: document.getElementById("co_colonia").value.trim(),
+    cp: document.getElementById("co_cp").value.trim(),
+    ciudad: document.getElementById("co_ciudad").value.trim(),
+    estado: document.getElementById("co_estado").value.trim(),
+    referencias: document.getElementById("co_ref").value.trim(),
+  };
   if(!name){ errEl.textContent = "Escribe tu nombre completo."; return; }
   if(!validEmail(email)){ errEl.textContent = "Escribe un correo válido."; return; }
+  if(!dir.calle || !dir.numero){ errEl.textContent = "Escribe la calle y el número de tu dirección."; return; }
+  if(!dir.colonia){ errEl.textContent = "Escribe la colonia."; return; }
+  if(!/^\d{5}$/.test(dir.cp)){ errEl.textContent = "El código postal debe tener 5 dígitos."; return; }
+  if(!dir.ciudad){ errEl.textContent = "Escribe la ciudad."; return; }
+  if(!dir.estado){ errEl.textContent = "Escribe el estado."; return; }
 
   const items = checkoutMode==="directo"
     ? [{ product_id: buyNowItem.id, variant_id: buyNowItem.variantId||null, qty: buyNowItem.qty }]
@@ -985,7 +1016,7 @@ async function startPayment(){
     const res = await fetch(API + "/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ customer:{name,email,phone}, items }),
+      body: JSON.stringify({ customer:{name,email,phone}, direccion: dir, items }),
     });
     const data = await res.json().catch(()=>({}));
     if(!res.ok || !data.init_point){
@@ -1014,7 +1045,7 @@ function showPaymentBanner(){
   const modoCompra = sessionStorage.getItem("fdl_checkout_mode");
   if(estado==="exito"){
     banner.classList.add("exito");
-    txt.textContent = "¡Pago recibido! Gracias por tu compra. Te contactaremos por WhatsApp para coordinar el envío.";
+    txt.textContent = "¡Pago recibido! Gracias por tu compra. Te enviamos un correo con el resumen de tu pedido y la dirección de entrega. Revísalo y avísanos si algo debe corregirse.";
     // Solo se vacía el carrito si el pago vino del carrito. Si fue "Comprar ahora",
     // esa pieza nunca entró al carrito, así que el carrito se deja intacto.
     if(modoCompra !== "directo"){ cart = []; saveCart(); renderCartBadge(); }
@@ -1032,7 +1063,9 @@ function showPaymentBanner(){
 }
 function dismissBanner(){ document.getElementById("payBanner").classList.remove("show"); }
 
+// Conservada para cuando se active el número de WhatsApp del negocio (hoy sin botón que la llame).
 function checkoutWhatsApp(){
+  if(!WHATSAPP) return;
   if(!cart.length) return;
   const lines = cart.map(c=>{
     const vpart = c.variantName ? ` (${c.variantName})` : "";
