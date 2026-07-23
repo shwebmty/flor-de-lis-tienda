@@ -62,6 +62,9 @@
   .card-desc{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;line-height:1.5;color:var(--tinta-suave);margin:0 0 16px;flex:1;}
   .card-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .price{font-size:18px;font-weight:700;color:var(--vino);}
+  .price-old{font-size:14px;font-weight:500;color:var(--tinta-suave);text-decoration:line-through;margin-right:6px;}
+  .disc-badge{display:inline-block;background:var(--vino);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:6px;}
+  .disc-badge-lg{display:inline-block;background:var(--vino);color:#fff;font-size:13px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:10px;}
   .add-btn{background:var(--vino);color:var(--crema);border:none;padding:8px 16px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
   .add-btn:hover{background:var(--vino-osc);}
   .add-btn.opts{background:#fff;color:var(--vino);border:1.5px solid var(--vino);}
@@ -131,6 +134,7 @@
   .qty .qmax{font-size:11px;color:var(--tinta-suave);font-weight:500;}
   .ci-remove{background:none;border:none;color:var(--tinta-suave);cursor:pointer;font-size:12px;text-decoration:underline;margin-left:auto;align-self:flex-start;}
   .cart-foot{padding:20px 24px;border-top:1px solid rgba(184,134,59,0.3);}
+  .ck-row{display:flex;justify-content:space-between;font-size:14px;color:var(--tinta-suave);margin-bottom:4px;}
   .cart-total{display:flex;justify-content:space-between;font-size:18px;font-weight:700;margin-bottom:16px;}
   .wa-btn{display:block;width:100%;text-align:center;background:var(--vino);color:var(--crema);text-decoration:none;padding:15px;border-radius:4px;font-weight:600;font-size:15px;border:none;cursor:pointer;}
   .wa-btn:hover{background:var(--vino-osc);}
@@ -476,11 +480,12 @@
   </div>
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-foot" id="cartFoot" style="display:none">
+    <div id="cartFootBreak" style="margin-bottom:8px"></div>
     <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
     <button class="wa-btn" style="background:transparent;color:var(--vino);border:1.5px solid rgba(110,31,47,0.3);margin-bottom:12px;font-weight:600" onclick="keepShopping()">← Seguir agregando productos</button>
     <button class="wa-btn" onclick="openCheckout()">Pagar con tarjeta</button>
     <button class="wa-btn" style="background:#fff;color:var(--vino);border:1.5px solid var(--vino);margin-top:10px" onclick="checkoutWhatsApp()">Pedir por WhatsApp</button>
-    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Pago seguro con Mercado Pago, o coordina por WhatsApp. El envío se acuerda por WhatsApp.</p>
+    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Pago seguro con Mercado Pago, o coordina por WhatsApp.</p>
   </div>
 </aside>
 
@@ -524,6 +529,8 @@ let buyNowItem = null;        // {id,name,price,image,variantId,variantName,qty,
 /* ================= HELPERS DE VARIANTES/STOCK ================= */
 // ¿El producto se maneja por variantes?
 function hasVariants(p){ return Array.isArray(p.variants) && p.variants.length>0; }
+// Precio efectivo (con descuento si el producto trae uno vigente del servidor).
+function effPrice(p){ return (p.discount && p.discount.final_price!=null) ? p.discount.final_price : p.price; }
 // Stock disponible de un producto sin variantes (null = no controlado => se trata como 1)
 function plainStock(p){ return (p.stock==null) ? 1 : Number(p.stock); }
 // ¿Está todo agotado?
@@ -533,15 +540,18 @@ function isSoldOut(p){
 }
 
 /* ================= CARGA INICIAL ================= */
+let SHIP = { shipping_cost: 100, free_shipping_threshold: 0 };
 async function init(){
   renderCartBadge();
   try{
-    const [prods, cats] = await Promise.all([
+    const [prods, cats, ship] = await Promise.all([
       fetch(API + "/api/products").then(r=>r.json()),
       fetch(API + "/api/categories").then(r=>r.json()),
+      fetch(API + "/api/shipping-config").then(r=>r.json()).catch(()=>null),
     ]);
     PRODUCTS = Array.isArray(prods) ? prods : [];
     CATEGORIES = Array.isArray(cats) ? cats : [];
+    if(ship && typeof ship.shipping_cost==="number") SHIP = ship;
     if(PRODUCTS[0] && PRODUCTS[0].images && PRODUCTS[0].images[0]){
       document.getElementById("heroImg").src = PRODUCTS[0].images[0];
     }
@@ -552,6 +562,12 @@ async function init(){
     document.getElementById("grid").innerHTML =
       '<div class="empty">No pudimos cargar el catálogo en este momento. Vuelve a intentar en unos minutos.</div>';
   }
+}
+// Calcula el envío según subtotal y la config (gratis si alcanza el umbral > 0).
+function calcEnvio(subtotal){
+  const t = Number(SHIP.free_shipping_threshold)||0;
+  if(t>0 && subtotal>=t) return 0;
+  return Number(SHIP.shipping_cost)||0;
 }
 
 /* ================= CATÁLOGO ================= */
@@ -584,14 +600,19 @@ function renderGrid(){
     }else{
       btn = `<button class="add-btn" onclick="event.stopPropagation();addPlainToCart('${p.id}')">Añadir</button>`;
     }
+    const discBadge = p.discount ? `<span class="disc-badge">${esc(p.discount.label)}</span>` : "";
+    const priceHtml = p.discount
+      ? `<span><span class="price-old">$${p.discount.original}</span><span class="price">$${p.discount.final_price}</span></span>`
+      : `<span class="price">$${p.price}</span>`;
     return `<div class="card" onclick="openProduct('${p.id}')">
       <div class="card-img">${img}${soldFlag}</div>
       <div class="card-body">
         <span class="card-cat">${esc(p.category)}</span>
         <h3 class="serif">${esc(p.name)}</h3>
         <p class="card-desc">${esc(p.description||"")}</p>
+        ${discBadge}
         <div class="card-foot">
-          <span class="price">$${p.price}</span>
+          ${priceHtml}
           ${btn}
         </div>
       </div>
@@ -693,7 +714,10 @@ function renderDetail(p){
       <div>
         <span class="card-cat">${esc(p.category)}</span>
         <h1 class="serif">${esc(p.name)}</h1>
-        <span class="price-lg">$${p.price}</span>
+        ${p.discount ? `<span class="disc-badge-lg">${esc(p.discount.label)}</span><br>` : ""}
+        ${p.discount
+          ? `<span class="price-lg"><span class="price-old" style="font-size:20px">$${p.discount.original}</span>$${p.discount.final_price}</span>`
+          : `<span class="price-lg">$${p.price}</span>`}
         <p class="long">${esc(p.description||"")}</p>
         ${variantsHtml}
         ${qtyHtml}
@@ -775,7 +799,7 @@ function addPlainToCart(id, qty){
     if(ex.qty>=stock){ flashAdd("Ya tienes el máximo disponible en el carrito."); return; }
     ex.qty = Math.min(ex.qty + qty, stock);
   }else{
-    cart.push({key, id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId:null, variantName:null, qty, stock});
+    cart.push({key, id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId:null, variantName:null, qty, stock});
   }
   saveCart(); renderCartBadge(); renderCartItems();
   flashAdd(qty>1?`Añadidas ${qty} unidades.`:"Añadido al carrito.");
@@ -795,7 +819,7 @@ function addVariantToCart(id){
     if(ex.qty>=stock){ flashAdd("Ya tienes el máximo disponible de esa opción."); return; }
     ex.qty = Math.min(ex.qty + qty, stock);
   }else{
-    cart.push({key, id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId:v.id, variantName:v.name, qty, stock});
+    cart.push({key, id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId:v.id, variantName:v.name, qty, stock});
   }
   saveCart(); renderCartBadge(); renderCartItems();
   flashAdd(qty>1?`Añadidas ${qty} · ${v.name}.`:`Añadido: ${v.name}.`);
@@ -816,8 +840,8 @@ function buyNow(id){
   }
   const qty = Math.max(1, Math.min(detailQty, stock));
   checkoutMode = "directo";
-  buyNowItem = { id:p.id, name:p.name, price:p.price, image:(p.images&&p.images[0])||"", variantId, variantName, qty, stock };
-  showCoModal(buyNowItem.price * buyNowItem.qty);
+  buyNowItem = { id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId, variantName, qty, stock };
+  showCoModal(buyNowItem.price * buyNowItem.qty + calcEnvio(buyNowItem.price * buyNowItem.qty));
 }
 
 function flashAdd(msg){
@@ -861,8 +885,18 @@ function renderCartItems(){
       </div>
       <button class="ci-remove" onclick="removeFromCart('${c.key}')">Quitar</button>
     </div>`).join("");
-  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
-  document.getElementById("cartTotal").textContent = "$"+total;
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const envio = calcEnvio(subtotal);
+  const total = subtotal + envio;
+  const totalBox = document.getElementById("cartTotal");
+  // Desglose: subtotal, envío (o "Gratis"), total.
+  const foot2 = document.getElementById("cartFootBreak");
+  if(foot2){
+    foot2.innerHTML =
+      `<div class="ck-row"><span>Subtotal</span><span>$${subtotal}</span></div>`+
+      `<div class="ck-row"><span>Envío</span><span>${envio===0?'Gratis':'$'+envio}</span></div>`;
+  }
+  totalBox.textContent = "$"+total;
   foot.style.display="block";
 }
 function openCart(){ renderCartItems(); document.getElementById("cartOverlay").classList.add("open"); document.getElementById("cartDrawer").classList.add("open"); }
@@ -875,8 +909,8 @@ function openCheckout(){
   if(!cart.length) return;
   checkoutMode = "carrito";
   buyNowItem = null;
-  const total = cart.reduce((s,c)=>s+c.price*c.qty,0);
-  showCoModal(total);
+  const subtotal = cart.reduce((s,c)=>s+c.price*c.qty,0);
+  showCoModal(subtotal + calcEnvio(subtotal));
 }
 function showCoModal(total){
   document.getElementById("co_total").textContent = "$"+total;
