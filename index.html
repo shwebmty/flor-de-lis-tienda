@@ -22,14 +22,14 @@
   .wrap{max-width:1280px;margin:0 auto;}
   button{font-family:inherit;}
   .eyebrow{display:inline-block;color:var(--oro);font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
-  header{position:sticky;top:0;z-index:40;background:rgba(248,243,234,0.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(184,134,59,0.35);}
+  header{transition:transform .28s ease;position:sticky;top:0;z-index:40;background:rgba(248,243,234,0.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(184,134,59,0.35);}
   .hrow{display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,3vw,24px);flex-wrap:wrap;padding:14px clamp(16px,5vw,48px);}
   .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
   .brand span{font-size:23px;font-weight:600;letter-spacing:0.3px;color:var(--tinta);}
-  nav{display:flex;gap:clamp(16px,4vw,36px);flex-wrap:wrap;}
-  nav a{text-decoration:none;color:var(--tinta);font-size:15px;font-weight:500;}
+  nav{display:flex;gap:clamp(16px,4vw,36px);flex-wrap:wrap;align-items:center;}
+  nav a{display:inline-flex;align-items:center;height:38px;line-height:1;text-decoration:none;color:var(--tinta);font-size:15px;font-weight:500;}
   nav a:hover{color:var(--oro);}
-  nav a.nav-cart{display:inline-flex;align-items:center;gap:7px;background:var(--vino);color:var(--crema);padding:8px 16px;border-radius:40px;font-size:14px;font-weight:600;}
+  nav a.nav-cart{gap:8px;background:var(--vino);color:var(--crema);padding:0 18px;border-radius:19px;font-size:15px;font-weight:600;}
   nav a.nav-cart:hover{background:var(--vino-osc);color:var(--crema);}
   .nav-cart-n{display:none;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--crema);color:var(--vino);font-size:11px;font-weight:800;}
   .cart-btn{position:relative;display:flex;align-items:center;background:none;border:none;cursor:pointer;padding:4px;}
@@ -196,10 +196,11 @@
   .loading{text-align:center;padding:80px 20px;color:var(--tinta-suave);}
   .addmsg{font-size:13px;color:var(--tinta-suave);margin:10px 0 0;min-height:18px;}
   @media(max-width:720px){
+    header.head-hidden{transform:translateY(-100%);}
     nav a.nav-about{display:none;}
     nav{gap:14px;}
-    nav a{font-size:14px;}
-    nav a.nav-cart{padding:8px 14px;}
+    nav a{font-size:14px;height:36px;}
+    nav a.nav-cart{padding:0 15px;font-size:14px;border-radius:18px;}
     .hero-media{display:none;}
     .hero{padding:30px 20px 38px;gap:0;}
     .hero h1{font-size:31px;margin:12px 0 16px;}
@@ -1250,6 +1251,36 @@ function checkoutWhatsApp(){
 
 /* ================= UTIL ================= */
 function esc(s){ return String(s??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* Header auto-ocultable en móvil: se esconde al bajar, reaparece al subir.
+   En escritorio no se toca. Nunca se oculta si hay un panel abierto. */
+(function(){
+  const head = document.querySelector("header");
+  if(!head) return;
+  let lastY = window.scrollY || 0, ticking = false;
+  function panelAbierto(){
+    return !!document.querySelector(".cart-drawer.open, .panel.open, .co-overlay.open");
+  }
+  function evaluar(){
+    ticking = false;
+    const y = Math.max(0, window.scrollY || 0);
+    if(window.innerWidth > 720 || panelAbierto()){
+      head.classList.remove("head-hidden");
+      lastY = y; return;
+    }
+    const delta = y - lastY;
+    if(Math.abs(delta) < 6){ return; }
+    if(delta > 0 && y > 90){ head.classList.add("head-hidden"); }
+    else if(delta < 0){ head.classList.remove("head-hidden"); }
+    lastY = y;
+  }
+  window.addEventListener("scroll", function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(evaluar); }
+  }, {passive:true});
+  window.addEventListener("resize", function(){
+    if(window.innerWidth > 720) head.classList.remove("head-hidden");
+  }, {passive:true});
+})();
 
 showPaymentBanner();
 init();
