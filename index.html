@@ -184,6 +184,10 @@
   .wa-btn.buy-now{background:#fff;color:var(--vino);border:1.5px solid var(--vino);}
   .wa-btn.buy-now:hover{background:rgba(110,31,47,0.06);}
   .wa-btn.buy-now:disabled{background:var(--crema-2);color:var(--tinta-suave);border:1px solid var(--crema-2);cursor:not-allowed;}
+  .wa-btn.wa-green{background:#1FA855;color:#fff;border:none;font-weight:600;margin-top:0;}
+  .wa-btn.wa-green:hover{background:#178a45;}
+  .wa-sep{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--tinta-suave);font-size:12px;}
+  .wa-sep::before,.wa-sep::after{content:"";flex:1;height:1px;background:var(--crema-2);}
   .close-x{background:none;border:none;font-size:26px;line-height:1;color:var(--tinta);cursor:pointer;}
   .loading{text-align:center;padding:80px 20px;color:var(--tinta-suave);}
   .addmsg{font-size:13px;color:var(--tinta-suave);margin:10px 0 0;min-height:18px;}
@@ -194,10 +198,11 @@
 
 <script>
   const API = "https://flor-de-lis-api.shweb-mty.workers.dev";
-  // WhatsApp DESACTIVADO por ahora: toda la comunicación es por correo.
-  // Para reactivarlo: pon el número real aquí y vuelve a mostrar el botón "Pedir por WhatsApp"
-  // en el carrito (ver checkoutWhatsApp más abajo, que sigue funcional).
-  const WHATSAPP = ""; // ej. "5218112345678"
+  // WhatsApp ACTIVO. Número del negocio en formato internacional, sólo dígitos.
+  // Si el enlace no abriera el chat, prueba la variante heredada de México: "5218129123285".
+  const WHATSAPP = "528129123285";
+  // Mensaje que WhatsApp deja precargado al abrir la conversación.
+  const WA_SALUDO = "Hola! quiero comprar un producto";
 </script>
 
 <header>
@@ -294,6 +299,7 @@
         <a href="#" style="cursor:default;">Monterrey, N.L., México</a>
         <a href="mailto:hola@florlis.com">Pedidos y dudas por correo</a>
         <a href="#" style="cursor:default;">hola@florlis.com</a>
+        <a href="#" onclick="contactoWhatsApp();return false;">Escríbenos por WhatsApp</a>
       </div>
       <div class="fcol">
         <span class="h">Legal</span>
@@ -487,7 +493,13 @@
     <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
     <button class="wa-btn" style="background:transparent;color:var(--vino);border:1.5px solid rgba(110,31,47,0.3);margin-bottom:12px;font-weight:600" onclick="keepShopping()">← Seguir agregando productos</button>
     <button class="wa-btn" onclick="openCheckout()">Pagar con tarjeta</button>
-    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:12px 0 0;">Pago seguro con Mercado Pago. Todo el seguimiento de tu pedido lo haremos por correo electrónico.</p>
+    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:10px 0 0;">Pago seguro con Mercado Pago. Todo el seguimiento de tu pedido lo haremos por correo electrónico.</p>
+    <div class="wa-sep"><span>o</span></div>
+    <button class="wa-btn wa-green" onclick="checkoutWhatsApp()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-3px;margin-right:7px">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.47c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.21.89 2.39 1.01 2.55.12.17 1.74 2.67 4.22 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.29Z"></path>
+      </svg>Ordenar por WhatsApp</button>
+    <p style="font-size:12px;color:var(--tinta-suave);text-align:center;margin:8px 0 0;">El operador puede tardar hasta 24 horas hábiles en responder a su solicitud por WhatsApp.</p>
   </div>
 </aside>
 
@@ -521,6 +533,7 @@
     </div>
     <div class="co-field"><label>Estado</label><input id="co_estado" placeholder="Ej. Nuevo León"></div>
     <div class="co-field"><label>Referencias (opcional)</label><input id="co_ref" placeholder="Ej. casa blanca, entre calles..."></div>
+    <div id="co_break" style="margin:18px 0 2px"></div>
     <div class="co-total"><span>Total a pagar</span><span id="co_total">$0</span></div>
     <div class="co-err" id="co_err"></div>
     <div class="co-actions">
@@ -551,6 +564,11 @@ function effPrice(p){ return (p.discount && p.discount.final_price!=null) ? p.di
 // Total de una línea aplicando el descuento por cantidad (2x1, 3x2, % desde N).
 // Misma fórmula que el servidor; el servidor siempre manda al cobrar.
 // Total de una línea del carrito, consultando el descuento por cantidad actual del producto.
+// Precio de lista (sin ningún descuento) de una línea, para poder mostrar el ahorro.
+function cartNormalTotal(c){
+  const p = PRODUCTS.find(x=>x.id===c.id);
+  return (p ? p.price : c.price) * c.qty;
+}
 function cartLineTotal(c){
   const p = PRODUCTS.find(x=>x.id===c.id);
   return lineTotal(c.price, c.qty, p ? p.qty_discount : null);
@@ -596,6 +614,18 @@ async function init(){
   }
 }
 // Calcula el envío según subtotal y la config (gratis si alcanza el umbral > 0).
+// Construye el desglose (precio normal, descuento, subtotal, envío) que exige
+// el Art. 7 BIS de la LFPC: el cliente debe ver el total y sus componentes antes de pagar.
+function breakdownHTML(normal, subtotal, envio){
+  let html = "";
+  if(normal > subtotal){
+    html += `<div class="ck-row"><span>Precio normal</span><span style="text-decoration:line-through">$${normal}</span></div>`;
+    html += `<div class="ck-row" style="color:var(--vino);font-weight:600"><span>Descuento</span><span>−$${normal-subtotal}</span></div>`;
+  }
+  html += `<div class="ck-row"><span>Subtotal</span><span>$${subtotal}</span></div>`;
+  html += `<div class="ck-row"><span>Envío</span><span>${envio===0?'Gratis':'$'+envio}</span></div>`;
+  return html;
+}
 function calcEnvio(subtotal){
   const t = Number(SHIP.free_shipping_threshold)||0;
   if(t>0 && subtotal>=t) return 0;
@@ -876,7 +906,7 @@ function buyNow(id){
   checkoutMode = "directo";
   buyNowItem = { id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId, variantName, qty, stock };
   const sub = lineTotal(buyNowItem.price, buyNowItem.qty, p.qty_discount);
-  showCoModal(sub + calcEnvio(sub));
+  showCoModal(p.price * buyNowItem.qty, sub, calcEnvio(sub));
 }
 
 function flashAdd(msg){
@@ -930,9 +960,8 @@ function renderCartItems(){
   // Desglose: subtotal, envío (o "Gratis"), total.
   const foot2 = document.getElementById("cartFootBreak");
   if(foot2){
-    foot2.innerHTML =
-      `<div class="ck-row"><span>Subtotal</span><span>$${subtotal}</span></div>`+
-      `<div class="ck-row"><span>Envío</span><span>${envio===0?'Gratis':'$'+envio}</span></div>`;
+    const normal = cart.reduce((s,c)=>s+cartNormalTotal(c),0);
+    foot2.innerHTML = breakdownHTML(normal, subtotal, envio);
   }
   totalBox.textContent = "$"+total;
   foot.style.display="block";
@@ -947,10 +976,14 @@ function openCheckout(){
   if(!cart.length) return;
   checkoutMode = "carrito";
   buyNowItem = null;
+  const normal   = cart.reduce((s,c)=>s+cartNormalTotal(c),0);
   const subtotal = cart.reduce((s,c)=>s+cartLineTotal(c),0);
-  showCoModal(subtotal + calcEnvio(subtotal));
+  showCoModal(normal, subtotal, calcEnvio(subtotal));
 }
-function showCoModal(total){
+function showCoModal(normal, subtotal, envio){
+  const total = subtotal + envio;
+  const brk = document.getElementById("co_break");
+  if(brk) brk.innerHTML = breakdownHTML(normal, subtotal, envio);
   document.getElementById("co_total").textContent = "$"+total;
   document.getElementById("co_err").textContent = "";
   renderCoItemSummary();
@@ -1063,18 +1096,37 @@ function showPaymentBanner(){
 }
 function dismissBanner(){ document.getElementById("payBanner").classList.remove("show"); }
 
-// Conservada para cuando se active el número de WhatsApp del negocio (hoy sin botón que la llame).
+/* ================= WHATSAPP =================
+   Abre wa.me con el texto ya precargado. Se codifica con encodeURIComponent
+   para que nombres con &, # o acentos no rompan la URL. */
+function waOpen(text){
+  if(!WHATSAPP) return;
+  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`, "_blank");
+}
+
+// Contacto general (footer): sólo el saludo, sin carrito.
+function contactoWhatsApp(){ waOpen(WA_SALUDO); }
+
+// Pedido desde el carrito: saludo + detalle, con el mismo desglose que ve el cliente.
 function checkoutWhatsApp(){
   if(!WHATSAPP) return;
-  if(!cart.length) return;
+  if(!cart.length){ waOpen(WA_SALUDO); return; }
   const lines = cart.map(c=>{
     const vpart = c.variantName ? ` (${c.variantName})` : "";
     const qpart = c.qty>1 ? ` x${c.qty}` : "";
     return `• ${c.name}${vpart}${qpart} — $${cartLineTotal(c)}`;
-  }).join("%0A");
-  const total = cart.reduce((s,c)=>s+cartLineTotal(c),0);
-  const msg = `Hola, quiero hacer un pedido en Flor de Lis:%0A%0A${lines}%0A%0ATotal: $${total}%0A%0A¿Me ayudas a coordinar el pago y el envío?`;
-  window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, "_blank");
+  }).join("\n");
+  const subtotal = cart.reduce((s,c)=>s+cartLineTotal(c),0);
+  const envio = calcEnvio(subtotal);
+  const total = subtotal + envio;
+  const msg =
+    `${WA_SALUDO}\n\n` +
+    `${lines}\n\n` +
+    `Subtotal: $${subtotal}\n` +
+    `Envío: ${envio===0 ? "Gratis" : "$" + envio}\n` +
+    `Total: $${total}\n\n` +
+    `¿Me ayudas a coordinar el pago y el envío?`;
+  waOpen(msg);
 }
 
 /* ================= UTIL ================= */
