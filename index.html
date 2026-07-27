@@ -26,10 +26,10 @@
   .hrow{display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,3vw,24px);flex-wrap:wrap;padding:14px clamp(16px,5vw,48px);}
   .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
   .brand span{font-size:23px;font-weight:600;letter-spacing:0.3px;color:var(--tinta);}
-  nav{display:flex;gap:clamp(16px,4vw,36px);flex-wrap:wrap;align-items:center;}
+  nav{display:flex;gap:clamp(16px,4vw,36px);flex-wrap:nowrap;align-items:center;}
   nav a{display:inline-flex;align-items:center;height:38px;line-height:1;text-decoration:none;color:var(--tinta);font-size:15px;font-weight:500;}
   nav a:hover{color:var(--oro);}
-  nav a.nav-cart{gap:8px;background:var(--vino);color:var(--crema);padding:0 18px;border-radius:19px;font-size:15px;font-weight:600;}
+  nav a.nav-cart{gap:8px;flex-shrink:0;white-space:nowrap;background:var(--vino);color:var(--crema);padding:0 18px;border-radius:19px;font-size:15px;font-weight:600;}
   nav a.nav-cart:hover{background:var(--vino-osc);color:var(--crema);}
   .nav-cart-n{display:none;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--crema);color:var(--vino);font-size:11px;font-weight:800;}
   .cart-btn{position:relative;display:flex;align-items:center;background:none;border:none;cursor:pointer;padding:4px;}
@@ -73,6 +73,8 @@
   .add-btn:hover{background:var(--vino-osc);}
   .add-btn.opts{background:#fff;color:var(--vino);border:1.5px solid var(--vino);}
   .add-btn.opts:hover{background:rgba(110,31,47,0.06);}
+  .add-btn.added,.add-btn.opts.added{background:var(--oro);color:var(--tinta);border:1.5px solid var(--oro);}
+  .add-btn.added:hover,.add-btn.opts.added:hover{background:#a5762f;border-color:#a5762f;}
   .add-btn:disabled{background:var(--crema-2);color:var(--tinta-suave);border:1px solid var(--crema-2);cursor:not-allowed;}
   .empty{grid-column:1/-1;text-align:center;color:var(--tinta-suave);padding:60px 20px;font-size:16px;}
   #nosotros{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(32px,6vw,64px);align-items:center;padding:clamp(56px,10vw,100px) clamp(20px,5vw,48px);}
@@ -227,6 +229,15 @@
     #nosotros p{font-size:16px;}
   }
   @media(max-width:520px){ .hrow{justify-content:center;} nav{order:3;width:100%;justify-content:center;} }
+  @media(max-width:380px){
+    .cart-btn{display:none;}
+    .nav-cart-label{display:none;}
+    nav{gap:22px;}
+    nav a.nav-cart{background:none;color:var(--tinta);padding:0;gap:5px;font-weight:500;border-radius:0;}
+    nav a.nav-cart:hover{background:none;color:var(--oro);}
+    nav a.nav-cart svg{width:20px;height:20px;}
+    .nav-cart-n{min-width:17px;height:17px;padding:0 4px;background:var(--vino);color:var(--crema);font-size:10px;}
+  }
 </style>
 </head>
 <body>
@@ -256,10 +267,10 @@
       <a href="#inicio">Inicio</a>
       <a href="#catalogo">Catálogo</a>
       <a href="#nosotros" class="nav-about">Nosotros</a>
-      <a href="#" class="nav-cart" onclick="openCart();return false;">
+      <a href="#" class="nav-cart" aria-label="Ver mi carrito" onclick="openCart();return false;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 8h12l-1 12H7L6 8z"></path><path d="M9 8V6a3 3 0 016 0v2"></path>
-        </svg>Ver mi carrito<span class="nav-cart-n" id="navCartN">0</span></a>
+        </svg><span class="nav-cart-label">Mi carrito</span><span class="nav-cart-n" id="navCartN">0</span></a>
     </nav>
     <button class="cart-btn" onclick="openCart()" aria-label="Abrir carrito">
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2b2420" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -771,13 +782,17 @@ function renderGrid(){
       : `<span class="noimg">Sin foto</span>`;
     const sold = isSoldOut(p);
     const soldFlag = sold ? `<span class="soldflag">Agotado</span>` : "";
+    // Cuántas unidades de ESTE producto lleva ya el cliente (sumando variantes).
+    const enCarrito = cart.reduce((n,c)=> c.id===p.id ? n+c.qty : n, 0);
+    const suf = enCarrito>0 ? ` (${enCarrito})` : "";
+    const yaVa = enCarrito>0 ? " added" : "";
     let btn;
     if(sold){
       btn = `<button class="add-btn" disabled>Agotado</button>`;
     }else if(hasVariants(p)){
-      btn = `<button class="add-btn opts" onclick="event.stopPropagation();openProduct('${p.id}')">Elegir opciones</button>`;
+      btn = `<button class="add-btn opts${yaVa}" onclick="event.stopPropagation();openProduct('${p.id}')">Elegir opciones${suf}</button>`;
     }else{
-      btn = `<button class="add-btn" onclick="event.stopPropagation();addPlainToCart('${p.id}')">Añadir</button>`;
+      btn = `<button class="add-btn${yaVa}" onclick="event.stopPropagation();addPlainToCart('${p.id}')">Añadir${suf}</button>`;
     }
     const discBadge = (p.discount ? `<span class="disc-badge">${esc(p.discount.label)}</span>` : "")
       + (p.qty_discount ? `<span class="disc-badge" style="background:var(--oro);margin-left:6px">🎁 ${esc(p.qty_discount.label)}</span>` : "");
@@ -982,7 +997,7 @@ function addPlainToCart(id, qty){
   }else{
     cart.push({key, id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId:null, variantName:null, qty, stock});
   }
-  saveCart(); renderCartBadge(); renderCartItems();
+  saveCart(); renderCartBadge(); renderCartItems(); refrescarBotones(); revelarHeader();
   flashAdd(qty>1?`Añadidas ${qty} unidades.`:"Añadido al carrito.");
 }
 
@@ -1002,7 +1017,7 @@ function addVariantToCart(id){
   }else{
     cart.push({key, id:p.id, name:p.name, price:effPrice(p), image:(p.images&&p.images[0])||"", variantId:v.id, variantName:v.name, qty, stock});
   }
-  saveCart(); renderCartBadge(); renderCartItems();
+  saveCart(); renderCartBadge(); renderCartItems(); refrescarBotones(); revelarHeader();
   flashAdd(qty>1?`Añadidas ${qty} · ${v.name}.`:`Añadido: ${v.name}.`);
   openCart();
 }
@@ -1036,9 +1051,16 @@ function changeQty(key, dir){
   if(next<=0){ cart = cart.filter(c=>c.key!==key); }
   else if(next>item.stock){ /* tope */ }
   else{ item.qty = next; }
-  saveCart(); renderCartBadge(); renderCartItems();
+  saveCart(); renderCartBadge(); renderCartItems(); refrescarBotones();
 }
-function removeFromCart(key){ cart = cart.filter(c=>c.key!==key); saveCart(); renderCartBadge(); renderCartItems(); }
+function removeFromCart(key){ cart = cart.filter(c=>c.key!==key); saveCart(); renderCartBadge(); renderCartItems(); refrescarBotones(); }
+// Vuelve a mostrar el header fijo (móvil) para que se vea subir el contador.
+function revelarHeader(){
+  const h = document.querySelector("header");
+  if(h) h.classList.remove("head-hidden");
+}
+// Repinta las tarjetas para que los botones muestren el conteo actualizado.
+function refrescarBotones(){ if(PRODUCTS.length) renderGrid(); }
 function renderCartBadge(){
   const b = document.getElementById("cartBadge");
   const n = cart.reduce((s,c)=>s+c.qty,0);
